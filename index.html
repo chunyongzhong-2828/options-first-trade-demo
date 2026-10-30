@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>期权首单 · 产品能力 Demo</title>
+<meta name="description" content="《期权未首交用户促转化：三个月方案》配套的可交互 demo：持仓页入口、策略模板、首单保护、模拟盘、复盘卡片、新手指南。通用券商 App 示意，不代表任何真实产品。">
+<style>
+:root{--bg:#f3f4f6;--card:#fff;--ink:#1f2329;--sub:#646a73;--line:#e5e6eb;--blue:#2f6bff;--blue2:#eaf0ff;--green:#1db36b;--red:#e0245e;--orange:#ff7a00;--yellow:#fff4d6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",Arial,sans-serif;background:#e9ebf0;color:var(--ink);min-height:100vh}
+a{color:var(--blue)}
+.layout{display:flex;gap:28px;justify-content:center;align-items:flex-start;padding:28px 16px}
+.guide{width:360px;flex:none;background:#fff;border-radius:14px;padding:18px;border:1px solid var(--line)}
+.guide h1{font-size:17px;margin-bottom:6px}
+.guide p{font-size:13px;color:var(--sub);line-height:1.6}
+.guide .list{margin-top:14px;display:flex;flex-direction:column;gap:6px}
+.guide .item{border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;font-size:13px;line-height:1.5}
+.guide .item:hover{background:#f7f8fa}
+.guide .item.on{border-color:var(--blue);background:var(--blue2)}
+.guide .item b{display:block}
+.guide .item .tag{font-size:11px;color:var(--blue);background:var(--blue2);border-radius:4px;padding:1px 6px;display:inline-block;margin-top:3px}
+.guide .item.on .tag{background:#fff}
+.guide .foot{font-size:11px;color:#8f959e;line-height:1.6;margin-top:14px;border-top:1px dashed var(--line);padding-top:10px}
+.phone{width:390px;flex:none;height:800px;background:#000;border-radius:44px;padding:12px;box-shadow:0 20px 60px rgba(0,0,0,.25);position:relative}
+.inner{background:var(--bg);border-radius:34px;height:100%;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font-size:13px;font-weight:600;background:#fff}
+.status .pill{width:110px;height:28px;background:#000;border-radius:14px}
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.tabbar{height:58px;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center}
+.tabbar div{flex:1;text-align:center;font-size:11px;color:var(--sub);cursor:pointer;padding-top:2px}
+.tabbar div span{display:block;font-size:18px;line-height:22px}
+.tabbar div.on{color:var(--blue)}
+.top{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.top .back{font-size:20px;cursor:pointer;width:24px}
+.top b{font-size:16px;flex:1}
+.top .home{font-size:12px;color:var(--blue);cursor:pointer;border:1px solid var(--blue);border-radius:12px;padding:2px 8px}
+.sec{padding:12px 14px 0}
+.card{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:10px;border:1px solid var(--line)}
+.card h3{font-size:14px;margin-bottom:6px}
+.card p{font-size:12.5px;color:var(--sub);line-height:1.6}
+.card .big{font-size:22px;font-weight:700;color:var(--ink)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.kv{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:0}
+.kv b{font-weight:600}
+.btn{display:inline-block;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;border:1px solid var(--blue);color:var(--blue);background:#fff}
+.btn.pri{background:var(--blue);color:#fff}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.green{background:var(--green);border-color:var(--green);color:#fff}
+.btn.sm{padding:5px 12px;font-size:12px}
+.btn.block{display:block;width:100%}
+.btn.dis{opacity:.4;cursor:not-allowed}
+.tagline{display:inline-block;font-size:11px;border-radius:4px;padding:1px 6px;background:var(--blue2);color:var(--blue);margin-right:4px}
+.tagline.g{background:#e6f7ee;color:var(--green)}
+.tagline.o{background:#fff1e5;color:var(--orange)}
+.tagline.r{background:#fde8ef;color:var(--red)}
+.note{font-size:11px;color:#8f959e;line-height:1.5;padding:6px 14px 12px}
+.sect{font-size:13px;font-weight:700;color:var(--ink);margin:4px 0 8px}
+.pos{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.pos:last-child{border-bottom:0}
+.pos .n{font-weight:600;font-size:14px}
+.pos .s{font-size:11px;color:var(--sub)}
+.up{color:var(--red)} .dn{color:var(--green)}
+.tpl{border:1.5px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:#fff}
+.tpl.rec{border-color:var(--blue)}
+.tpl h4{font-size:14px;margin-bottom:2px}
+.tpl .one{font-size:12px;color:var(--sub);margin-bottom:6px}
+.tpl .ct{font-size:12.5px;background:#f7f8fa;border-radius:8px;padding:8px 10px;margin:6px 0;line-height:1.6}
+.tpl .btns{display:flex;gap:8px;margin-top:6px}
+.tpl .btns .btn{flex:1}
+.seg{display:flex;background:#f0f1f3;border-radius:8px;padding:3px;margin:8px 0}
+.seg div{flex:1;text-align:center;font-size:12px;padding:6px 0;border-radius:6px;cursor:pointer;color:var(--sub)}
+.seg div.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.form .kv{padding:9px 0;align-items:center}
+.stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.stepper div{width:32px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#f7f8fa;font-size:16px}
+.stepper span{width:40px;text-align:center;font-weight:600}
+.warn{background:var(--yellow);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.6;color:#7a5a00;margin:8px 0}
+.danger{background:#fde8ef;color:#a3123f}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--sub);line-height:1.5;margin:8px 0}
+.chk input{margin-top:3px}
+.modal{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:20;border-radius:34px}
+.modal .box{background:#fff;border-radius:14px;padding:18px;width:300px}
+.modal h4{font-size:15px;margin-bottom:8px}
+.modal p{font-size:12.5px;color:var(--sub);line-height:1.6}
+.modal .btns{display:flex;gap:8px;margin-top:12px}
+.modal .btns .btn{flex:1}
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;font-size:12px;padding:8px 14px;border-radius:20px;z-index:30;white-space:nowrap}
+.lock{background:linear-gradient(180deg,#5b6b8a,#2c3550);height:100%;color:#fff;padding:60px 16px 0;text-align:center}
+.lock .time{font-size:64px;font-weight:200;letter-spacing:-2px}
+.lock .date{font-size:15px;opacity:.85;margin-bottom:30px}
+.notif{background:rgba(255,255,255,.95);color:var(--ink);border-radius:16px;padding:12px 14px;text-align:left;margin-bottom:10px;cursor:pointer}
+.notif .h{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:3px}
+.notif b{font-size:13.5px;display:block;margin-bottom:2px}
+.notif p{font-size:12.5px;line-height:1.5}
+.quiz{margin-bottom:10px}
+.quiz .q{font-size:13.5px;font-weight:600;margin-bottom:8px;line-height:1.5}
+.quiz .opt{border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:12.5px;margin-bottom:6px;cursor:pointer;line-height:1.5}
+.quiz .opt.ok{border-color:var(--green);background:#e6f7ee}
+.quiz .opt.bad{border-color:var(--red);background:#fde8ef}
+.quiz .exp{font-size:12px;color:var(--sub);background:#f7f8fa;border-radius:8px;padding:8px 10px;line-height:1.6;margin-top:4px}
+.prog{height:6px;background:#e5e6eb;border-radius:3px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:var(--blue)}
+.course{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.course:last-child{border-bottom:0}
+.course .ic{width:44px;height:44px;border-radius:8px;background:var(--blue2);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.course b{font-size:13.5px;display:block}
+.course small{font-size:11.5px;color:var(--sub)}
+.course .st{font-size:11px;color:var(--green);flex:none}
+.cal{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px;line-height:1.5}
+.cal:last-child{border-bottom:0}
+.cal .d{width:52px;flex:none;font-weight:700;color:var(--orange)}
+.steps{display:flex;gap:4px;margin:8px 0}
+.steps div{flex:1;text-align:center;font-size:10.5px;color:var(--sub);padding:6px 2px;background:#f0f1f3;border-radius:6px;line-height:1.3}
+.steps div.done{background:#e6f7ee;color:var(--green);font-weight:600}
+.steps div.cur{background:var(--blue);color:#fff;font-weight:600}
+.home-card{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.home-card .num{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
+.home-card b{font-size:13.5px;display:block}
+.home-card small{font-size:11.5px;color:var(--sub);line-height:1.4;display:block}
+.home-card .arrow{color:#c9cdd4;font-size:18px}
+.banner{background:#1f2329;color:#fff;font-size:11px;padding:7px 14px;line-height:1.5}
+.cm{background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--line)}
+.cm .u{font-size:12px;color:var(--sub);display:flex;justify-content:space-between}
+.cm p{font-size:13px;line-height:1.55;margin-top:3px}
+.cm .ans{margin-top:6px;background:#f7f8fa;border-radius:8px;padding:8px 10px;font-size:12.5px;line-height:1.55}
+.cm .ans b{color:var(--blue)}
+@media (max-width:820px){.layout{flex-direction:column;align-items:center;padding:10px 0}.guide{width:min(390px,100%);order:2}.phone{width:min(390px,100vw);height:min(800px,calc(100vh - 20px));border-radius:28px;padding:8px}.inner{border-radius:22px}.modal{border-radius:22px}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="guide" id="guide"></aside>
+  <div class="phone"><div class="inner">
+    <div class="status"><span>9:41</span><span class="pill"></span><span>▮▮▮ 5G</span></div>
+    <div class="screen" id="screen"></div>
+    <nav class="tabbar" id="tabbar"></nav>
+    <div id="overlay"></div>
+  </div></div>
+</div>
+<script>
+/* ===== 数据：全部取 2026-10-29 美股收盘（盈透 TWS 买卖中间价），与方案附件 A 一致 ===== */
+const D={px:213.66,ccK:240,ccP:1.45,ppK:200,ppP:3.78,itmK:190,itmP:25.93,itmDelta:0.86,otmK:230,otmP:3.25,exp:'11-20',earn:'11-18'};
+const CAP=((D.ccK-D.px+D.ccP)*100).toFixed(0); // 2779
+const ST={opened:false,simDone:false,ordered:false,qty:1,quiz:[null,null,null],tab:'cc'};
+const fmt=n=>Number(n).toLocaleString('en-US');
+
+/* ===== 页面清单：id、名称、对应方案章节、看点 ===== */
+const SCREENS=[
+ {id:'home',name:'导览：按用户的路径点下去',tag:'全文',note:'从一条推送开始，走到第二单。'},
+ {id:'push',name:'① 分层推送（锁屏通知）',tag:'3.3 阶段 · 4.2 行情日历',note:'同一个人不同阶段收到的不是同一条。'},
+ {id:'positions',name:'② 持仓页「这只股票能怎么用期权」',tag:'五-1 持仓页入口（P0）',note:'数字直接是他持仓的合约，不是广告。'},
+ {id:'templates',name:'③ 第一单模板：三选一',tag:'五-2 策略模板一键下单（P0）',note:'合约自动推荐，不用看期权链；每个模板先讲最坏情况。'},
+ {id:'onboard',name:'④ 开通流程：情景题代替风险测评',tag:'五-6 开通流程嵌教育（P1）',note:'答题就是学习，开通成功页直接给第一单建议。'},
+ {id:'sim',name:'⑤ 模拟盘一单',tag:'五-5 模拟盘（P1）· 六 首单任务阶梯',note:'真实报价，到期自动结算并推复盘。'},
+ {id:'order',name:'⑥ 确认下单：首单模式',tag:'五-3 最大亏损与损益图 · 五-4 首单保护（P0/P1）',note:'最多亏多少、哪里开始赚，数字和图同屏；张数超限弹二次确认。'},
+ {id:'review',name:'⑦ 首单复盘卡片 → 第二单',tag:'4.1「做了」档 · 六 第 3 个月',note:'到期后 7 天内，把结果讲清楚，顺手给下一单。'},
+ {id:'guide',name:'⑧ 期权新手指南（常驻入口）',tag:'4.1 官方内容',note:'四课按顺序看，末尾直接接模拟盘。'},
+ {id:'market',name:'⑨ 市场 · 期权 Tab',tag:'4.2 行情日历 · 4.3 社区创作者',note:'周报、财报日历、创作者老带新、晒单精选。'},
+ {id:'ask',name:'⑩ 新手提问区',tag:'4.3 用户内容',note:'24 小时内答，高频问题沉淀进指南第 4 课。'},
+];
+
+/* ===== 损益图（SVG） ===== */
+function payoff(type,w=330,h=130){
+  const xs=[],ys=[];const lo=170,hi=280;
+  for(let s=lo;s<=hi;s+=1){let y;
+    if(type==='cc') y=(Math.min(s,D.ccK)-D.px+D.ccP)*100;
+    else if(type==='pp') y=(Math.max(s,D.ppK)-D.px-D.ppP)*100;
+    else if(type==='itm') y=(Math.max(s-D.itmK,0)-D.itmP)*100;
+    else y=(s-D.px)*100;
+    xs.push(s);ys.push(y);}
+  const stock=xs.map(s=>(s-D.px)*100);
+  const ymin=Math.min(...ys,...stock),ymax=Math.max(...ys,...stock);
+  const X=s=>12+(s-lo)/(hi-lo)*(w-24), Y=v=>10+(ymax-v)/(ymax-ymin)*(h-30);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+X(xs[i]).toFixed(1)+','+Y(v).toFixed(1)).join(' ');
+  const col={cc:'#ff7a00',pp:'#2f6bff',itm:'#1db36b'}[type];
+  const be={cc:D.px-D.ccP,pp:D.px+D.ppP,itm:D.itmK+D.itmP}[type];
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="display:block">
+   <line x1="12" x2="${w-12}" y1="${Y(0)}" y2="${Y(0)}" stroke="#ccc"/>
+   <line x1="${X(D.px)}" x2="${X(D.px)}" y1="8" y2="${h-18}" stroke="#2f6bff" stroke-dasharray="3 3"/>
+   <path d="${path(stock)}" fill="none" stroke="#9aa0a6" stroke-width="1.5" stroke-dasharray="4 3"/>
+   <path d="${path(ys)}" fill="none" stroke="${col}" stroke-width="2.6"/>
+   <circle cx="${X(be)}" cy="${Y(0)}" r="3.5" fill="${col}"/>
+   <text x="${X(D.px)+3}" y="18" font-size="9" fill="#2f6bff">现价 ${D.px}</text>
+   <text x="${Math.min(X(be)+4,w-70)}" y="${Y(0)-6}" font-size="9" fill="${col}">${be.toFixed(2)} 开始赚</text>
+   <text x="12" y="${h-4}" font-size="8.5" fill="#8f959e">灰虚线＝只持 100 股；横轴＝到期日 ${D.exp} 股价（170～280 美元）</text>
+  </svg>`;
+}
+
+/* ===== 各页面 ===== */
+const V={};
+const hdr=(t,back='home')=>`<div class="top"><span class="back" onclick="go('${back}')">‹</span><b>${t}</b><span class="home" onclick="go('home')">导览</span></div>`;
+
+V.home=()=>`<div class="banner">方案《期权未首交用户促转化：三个月方案》配套 demo · 通用券商 App 示意，不代表任何真实产品 · 数据为 2026-10-29 美股收盘，不构成投资建议</div>
+<div class="sec">
+<div class="card"><h3>一个持有 100 股英伟达、没做过期权的用户，三个月里会看到什么</h3><p>按下面顺序点，就是方案第三到第六节落到产品上的样子。每一页右上角「导览」可回到这里；左侧（手机上在下方）标了每页对应方案的章节。</p></div>
+${SCREENS.slice(1).map((s,i)=>`<div class="home-card" onclick="go('${s.id}')"><div class="num">${i+1}</div><div style="flex:1"><b>${s.name.replace(/^[①-⑩]\s?/,'')}</b><small>${s.tag} · ${s.note}</small></div><span class="arrow">›</span></div>`).join('')}
+<div class="note">当前状态：${ST.opened?'已开通期权权限':'未开通期权权限'} · ${ST.simDone?'已做模拟盘一单':'未做模拟盘'} · ${ST.ordered?'已提交真实首单':'未下真实首单'}　<a href="#" onclick="reset();return false">重置</a></div>
+</div>`;
+
+V.push=()=>`<div class="lock"><div class="time">9:41</div><div class="date">10 月 30 日 星期五</div>
+<div class="notif" onclick="go('positions')"><div class="h"><span>券商 App · 持仓提醒</span><span>现在</span></div><b>财报前，持有英伟达的你可以先收一笔</b><p>持有 100 股英伟达，卖 1 张 240 Call 现在能收 ${(D.ccP*100).toFixed(0)} 美元；跌时少亏一点，涨过 240 收益封顶。第一张期权，先从看得懂的做起。</p></div>
+<div class="notif" onclick="go('sim')"><div class="h"><span>券商 App · 给「看过未开通」的人</span><span>昨天</span></div><b>你昨天看的那张合约，先用模拟盘做一单</b><p>不花钱、用真实报价，到期告诉你结果。做完送 50 积分。</p></div>
+<div class="notif" onclick="go('review')"><div class="h"><span>券商 App · 给「已下首单」的人</span><span>到期日</span></div><b>你的第一张备兑到期了</b><p>这次收了 ${(D.ccP*100).toFixed(0)} 美元，Call 作废。点开看复盘和下一单。</p></div>
+<p style="font-size:11.5px;opacity:.8;margin-top:14px;line-height:1.6">同一个持仓型用户，在「未接触 / 看过未开通 / 已下首单」三个阶段收到的是三条不同的推送（方案 3.3）。点任意一条进入。</p></div>`;
+
+V.positions=()=>`${hdr('持仓','push')}
+<div class="sec">
+<div class="card"><div class="row"><div><p>总资产（美元）</p><div class="big">38,412.60</div></div><div style="text-align:right"><p>今日盈亏</p><div class="big dn" style="font-size:18px">−428.00</div></div></div></div>
+<div class="sect">持仓</div>
+<div class="card">
+ <div class="pos"><div><div class="n">英伟达 NVDA</div><div class="s">100 股 · 成本 200.00</div></div><div style="text-align:right"><div class="n">${D.px}</div><div class="s up">+1,366.00 (+6.83%)</div></div></div>
+ <div style="background:var(--blue2);border-radius:10px;padding:10px 12px;margin:6px 0 4px">
+  <div class="row"><b style="font-size:13.5px">这 100 股能怎么用期权</b><span class="tagline o">财报 ${D.earn}</span></div>
+  <div class="kv"><span>本周卖 1 张 240 Call 能收</span><b class="up">${(D.ccP*100).toFixed(0)} 美元</b></div>
+  <div class="kv"><span>财报前保护到 200 美元要花</span><b>${(D.ppP*100).toFixed(0)} 美元</b></div>
+  <div class="kv"><span>两个都做（领口）</span><b>净花 ${((D.ppP-D.ccP)*100).toFixed(0)} 美元</b></div>
+  <div class="btn pri block" style="margin-top:8px" onclick="go('templates')">看第一单怎么做</div>
+ </div>
+ <div class="pos"><div><div class="n">特斯拉 TSLA</div><div class="s">30 股 · 成本 380.00</div></div><div style="text-align:right"><div class="n">393.83</div><div class="s up">+414.90 (+3.64%)</div></div></div>
+ <div style="background:#f7f8fa;border-radius:10px;padding:8px 12px;font-size:12px;color:var(--sub);line-height:1.6">不到 100 股做不了备兑。想加仓又不想追高：买 1 张实值认购 ≈ 86 股的涨跌，占用只有买 100 股的一成多。<a href="#" onclick="ST.tab='itm';go('templates');return false">看怎么做 ›</a></div>
+</div>
+<div class="note">方案五-1：卡片里的数字就是他持仓对应合约的真实报价（${D.exp} 到期），点进去就是那张合约，不是「期权上线了」的广告。</div>
+</div>`;
+
+V.templates=()=>{
+ const t=ST.tab;
+ const tpl={
+  cc:{h:'备兑开仓',one:'怕它不涨，想顺手收点钱 · 已有 100 股，推荐',ct:`持有 100 股不动，<b>卖出 1 张 NVDA ${D.exp} 到期 240 Call</b>，先收 <b>${(D.ccP*100).toFixed(0)} 美元</b>（约股价的 0.7%，22 天）`,worst:`股价涨过 240，超出部分归买方，收益封顶 ${fmt(CAP)} 美元；股票下跌时亏损和持股一样，只是少亏 ${(D.ccP*100).toFixed(0)}。`,type:'cc',rec:true},
+  pp:{h:'保护性认沽',one:'怕财报砸盘 · 浮盈大、财报前睡不着的人',ct:`持有 100 股不动，<b>买入 1 张 NVDA ${D.exp} 到期 200 Put</b>，先花 <b>${(D.ppP*100).toFixed(0)} 美元</b>（约股价的 1.8%）`,worst:`股价不跌，${(D.ppP*100).toFixed(0)} 美元全部损失，相当于买了保险没出险；跌破 200 后每跌 1 美元，Put 赚回 100 美元。`,type:'pp'},
+  itm:{h:'买入实值认购',one:'不到 100 股、看好又不想追高 · 当「小号股票」用',ct:`<b>买入 1 张 NVDA ${D.exp} 到期 190 Call</b>，一张 <b>${fmt((D.itmP*100).toFixed(0))} 美元</b>，delta ${D.itmDelta}：涨跌 ≈ 86 股，占用只有买 100 股的 12%`,worst:`涨过 ${(D.itmK+D.itmP).toFixed(2)} 就开始赚；跌破 190 才会亏光 ${fmt((D.itmP*100).toFixed(0))} 美元。时间价值只有 227 美元。不推虚值 230 Call（${(D.otmP*100).toFixed(0)} 美元，要涨过 ${(D.otmK+D.otmP).toFixed(2)} 才赚，财报不及预期直接归零）。`,type:'itm'}
+ }[t];
+ return `${hdr('从持仓出发的第一单','positions')}
+<div class="sec">
+<div class="card" style="padding:10px 14px"><div class="row"><div><b>英伟达 NVDA · 100 股</b><p>现价 ${D.px} · 财报 ${D.earn} · 到期 ${D.exp}（22 天，财报后）</p></div><span class="tagline">持仓型</span></div></div>
+<div class="seg"><div class="${t==='cc'?'on':''}" onclick="ST.tab='cc';go('templates')">备兑开仓</div><div class="${t==='pp'?'on':''}" onclick="ST.tab='pp';go('templates')">保护性认沽</div><div class="${t==='itm'?'on':''}" onclick="ST.tab='itm';go('templates')">实值认购</div></div>
+<div class="tpl ${tpl.rec?'rec':''}"><div class="row"><h4>${tpl.h}</h4>${tpl.rec?'<span class="tagline">按你的持仓推荐</span>':''}</div><div class="one">${tpl.one}</div>
+ <div class="ct">${tpl.ct}</div>
+ ${payoff(tpl.type)}
+ <div class="warn"><b>最坏情况：</b>${tpl.worst}</div>
+ <div class="btns"><div class="btn" onclick="go('sim')">先用模拟盘做一单</div><div class="btn pri" onclick="${ST.opened?"go('order')":"go('onboard')"}">真实下单${ST.opened?'':'（先开通）'}</div></div>
+</div>
+<div class="note">方案五-2：三个模板覆盖方案里全部第一单类型；合约按「到期在财报后、备兑行权价比现价高 10%～12%、保护位比现价低 6%、实值 delta 0.8～0.9」自动选，用户不用看期权链。想自己选合约的，底部「交易」切专业版。</div>
+</div>`;};
+
+const QUIZ=[
+ {q:'你持有 100 股英伟达，卖了 1 张 240 Call 收 145 美元。到期那天股价 260，会发生什么？',o:['股票按 240 被卖掉，145 美元照样是我的','145 美元要退回去','我倒亏 2,000 美元'],a:0,e:'备兑的代价是「涨过行权价的那截让出去」：股票按 240 卖出，少赚 1,855 美元，但不会倒亏。这就是方案里说的「跌时少亏一点，涨时让出一截」。'},
+ {q:'你买了 1 张 200 Put 花 378 美元保护持仓，财报后股价涨到 230。这 378 美元？',o:['全部损失，相当于保险没出险','能拿回一半','跟股价一起涨'],a:0,e:'保护性认沽就是买保险：没出险，保费就是成本。你的 100 股涨了 1,634 美元，净赚 1,256 美元。'},
+ {q:'同一到期日，230 Call 只要 325 美元，190 Call 要 2,593 美元。为什么第一单不推便宜的那张？',o:['便宜的要涨过 233.25 才开始赚，财报不及预期直接归零','贵的手续费更低','没有区别，看个人喜好'],a:0,e:'230 Call 的到期实值概率只有约四分之一；190 Call 涨过 215.93 就开始赚、跌破 190 才亏光。第一单要的是胜率，不是赔率。'}
+];
+V.onboard=()=>{
+ const done=ST.quiz.every(x=>x!==null);
+ if(ST.opened) return `${hdr('开通成功','templates')}<div class="sec">
+ <div class="card" style="text-align:center;padding:24px 14px"><div style="font-size:40px">✅</div><h3 style="margin-top:6px">期权权限已开通</h3><p>三道情景题你都答对了，风险等级：进取型（示意）。</p></div>
+ <div class="card"><h3>你的第一单建议</h3><p>根据你持有的 100 股英伟达：</p>
+ <div class="kv"><span>备兑开仓 · 卖 1 张 ${D.exp} 到期 240 Call</span><b class="up">先收 ${(D.ccP*100).toFixed(0)} 美元</b></div>
+ <div class="kv"><span>最坏情况</span><b>涨过 240 收益封顶 ${fmt(CAP)}</b></div>
+ <div class="btn pri block" style="margin-top:10px" onclick="go('order')">去确认这一单</div>
+ <div class="btn block" style="margin-top:8px" onclick="go('sim')">还是先模拟一单</div></div>
+ <div class="note">方案五-6：开通成功页不是「恭喜」就完了，直接给第一单；这是「已开通未下单」阶段最热的 3 天里的第 1 次触达。</div></div>`;
+ return `${hdr('开通期权权限','templates')}<div class="sec">
+ <div class="card"><h3>三道情景题，答完即开通</h3><p>题目全部用你持仓里的股票和今天的真实报价，答错也能开通，但会把解释再念一遍。</p>
+ <div class="prog"><i style="width:${ST.quiz.filter(x=>x!==null).length/3*100}%"></i></div>
+ ${QUIZ.map((qz,i)=>`<div class="quiz"><div class="q">${i+1}. ${qz.q}</div>${qz.o.map((o,j)=>`<div class="opt ${ST.quiz[i]===null?'':(j===qz.a?'ok':(ST.quiz[i]===j?'bad':''))}" onclick="ans(${i},${j})">${['A','B','C'][j]}. ${o}</div>`).join('')}${ST.quiz[i]!==null?`<div class="exp">${ST.quiz[i]===qz.a?'答对了。':'不对。'}${qz.e}</div>`:''}</div>`).join('')}
+ <div class="btn pri block ${done?'':'dis'}" onclick="${done?'ST.opened=true;go(\'onboard\')':''}">${done?'开通并看第一单建议':'先答完三题'}</div></div>
+ <div class="note">方案五-6：风险测评题改成情景题，答题过程就是学习（对应 4.1「懂了」档）。合规要素不减，只是换了问法。</div></div>`;};
+function ans(i,j){if(ST.quiz[i]!==null)return;ST.quiz[i]=j;go('onboard');}
+
+V.sim=()=>`${hdr('模拟盘一单','templates')}<div class="sec">
+${ST.simDone?`<div class="card"><div class="row"><h3>模拟持仓</h3><span class="tagline g">已成交 · 真实报价</span></div>
+ <div class="kv"><span>备兑开仓 · 卖 1 张 NVDA ${D.exp} 240 Call</span><b class="up">+${(D.ccP*100).toFixed(0)} 美元已收</b></div>
+ <div class="kv"><span>到期 ${D.exp}</span><b>自动结算，到期后推复盘</b></div>
+ <div class="kv"><span>奖励</span><b>+50 积分已到账</b></div>
+ <div class="steps"><div class="done">看完小课</div><div class="done">模拟一单</div><div class="cur">开通权限</div><div>真实首单</div><div>第二单</div></div>
+ <div class="btn pri block" style="margin-top:6px" onclick="go('${ST.opened?'order':'onboard'}')">${ST.opened?'做一单真的':'开通权限，做一单真的'}</div>
+ <div class="btn block" style="margin-top:8px" onclick="go('review')">先看看到期复盘长什么样</div></div>`
+:`<div class="card"><div class="row"><h3>用真实报价做一单模拟</h3><span class="tagline g">不花钱</span></div><p>和真实下单同一个页面、同一张合约、同一个价格，只是不扣钱。到期自动结算，结果推给你。</p>
+ <div class="kv"><span>合约</span><b>NVDA ${D.exp} 240 Call · 卖出开仓</b></div>
+ <div class="kv"><span>价格</span><b>${D.ccP}（1 张 ＝ ${(D.ccP*100).toFixed(0)} 美元）</b></div>
+ <div class="kv"><span>张数</span><b>1</b></div>
+ ${payoff('cc')}
+ <div class="btn green block" style="margin-top:8px" onclick="ST.simDone=true;toast('模拟成交 · +50 积分');go('sim')">模拟卖出 1 张</div></div>`}
+<div class="note">方案五-5、第六节首单任务阶梯：看完小课 → 模拟一单 → 真实首单，每一步小额奖励，不按交易量给奖。模拟盘是「观望」阶段的默认动作。</div></div>`;
+
+V.order=()=>{
+ if(!ST.opened) return `${hdr('确认下单','templates')}<div class="sec"><div class="card" style="text-align:center;padding:24px 14px"><div style="font-size:36px">🔒</div><h3 style="margin-top:6px">还没开通期权权限</h3><p>三道情景题，两分钟。</p><div class="btn pri" style="margin-top:10px" onclick="go('onboard')">去开通</div></div></div>`;
+ if(ST.ordered) return `${hdr('已提交','templates')}<div class="sec"><div class="card" style="text-align:center;padding:24px 14px"><div style="font-size:40px">🎉</div><h3 style="margin-top:6px">第一单已提交</h3><p>卖出 1 张 NVDA ${D.exp} 240 Call，先收 ${(D.ccP*100).toFixed(0)} 美元。到期 ${D.exp}，到期后 7 天内给你复盘卡片。</p><div class="btn pri" style="margin-top:10px" onclick="go('review')">模拟时间快进：看到期复盘</div></div><div class="note">首单免佣 1 张（第六节激励边界：奖励挂在首单，不挂在张数和频率上）。</div></div>`;
+ return `${hdr('确认下单 · 首单模式','templates')}<div class="sec">
+ <div class="seg"><div class="on">首单模式</div><div onclick="toast('专业版＝期权链自己选合约，首 3 单同样受保护')">专业版</div></div>
+ <div class="card form">
+  <div class="kv"><span>合约</span><b>NVDA ${D.exp} 240 Call</b></div>
+  <div class="kv"><span>方向</span><b>卖出开仓（备兑，有 100 股做担保）</b></div>
+  <div class="kv"><span>价格</span><b>${D.ccP} 美元／股 · 限价</b></div>
+  <div class="kv"><span>张数（1 张 ＝ 100 股）</span><div class="stepper"><div onclick="qty(-1)">−</div><span>${ST.qty}</span><div onclick="qty(1)">＋</div></div></div>
+  <div class="kv"><span>先收</span><b class="up">${(D.ccP*100*ST.qty).toFixed(0)} 美元</b></div>
+ </div>
+ <div class="card"><h3>最多亏多少、哪里开始赚</h3>
+  ${payoff('cc')}
+  <div class="kv"><span>股价涨过 240</span><b>收益封顶 ${fmt(CAP)} 美元，股票按 240 卖出</b></div>
+  <div class="kv"><span>股价下跌</span><b>和只持股一样亏，但少亏 ${(D.ccP*100).toFixed(0)} 美元</b></div>
+  <div class="kv"><span>股价不动</span><b>${(D.ccP*100).toFixed(0)} 美元白收</b></div>
+ </div>
+ <div class="warn danger">首单保护：你的前 3 单每单最多 1 张；不能裸卖；单笔权利金不超过账户净值 5%。超出会二次确认。</div>
+ <label class="chk"><input type="checkbox" id="agree"> 我知道卖出认购会在股价涨过 240 时被行权，股票按 240 卖出；期权有风险，本页不构成投资建议。</label>
+ <div class="btn red block" onclick="confirmOrder()">确认卖出 ${ST.qty} 张</div>
+ <div class="note">方案五-3、五-4：确认页固定显示「最多亏多少、到期哪里开始赚」，数字和图同屏；首单保护在产品层硬限制，不靠运营文案。</div></div>`;};
+function qty(d){const n=ST.qty+d;if(n<1)return;if(n>1){modal('超过首单上限','你的前 3 单每单最多 1 张（首单保护）。这是为了让第一次的损益在可承受范围内。要继续吗？',[['改回 1 张',()=>{ST.qty=1;closeModal();go('order')}],['我知道，继续',()=>{ST.qty=n;closeModal();go('order')}]]);return;}ST.qty=n;go('order');}
+function confirmOrder(){const ok=document.getElementById('agree')?.checked;if(!ok){toast('先勾选风险确认');return;}ST.ordered=true;go('order');}
+
+V.review=()=>`${hdr('你的第一张备兑到期了','push')}<div class="sec">
+<div class="card"><div class="row"><h3>复盘 · NVDA ${D.exp} 240 Call</h3><span class="tagline g">已到期 · Call 作废</span></div>
+ <div class="kv"><span>到期日股价（示意）</span><b>221.00（比下单时 +3.4%）</b></div>
+ <div class="kv"><span>这一单的结果</span><b class="up">权利金 ${(D.ccP*100).toFixed(0)} 美元留下</b></div>
+ <div class="kv"><span>比只持股</span><b class="up">多赚 ${(D.ccP*100).toFixed(0)} 美元</b></div>
+ <div class="kv"><span>如果股价到了 260</span><b>你会少赚 1,855，这是备兑的代价</b></div>
+ <p style="margin-top:8px">一句话：这 22 天你把「涨过 240 的那截」卖了 ${(D.ccP*100).toFixed(0)} 美元，它没涨到，钱白收。这不是稳赚，是一笔划算的交换。</p></div>
+<div class="card"><h3>下一单，二选一</h3>
+ <div class="tpl rec" style="margin-bottom:8px"><h4>继续备兑 · 12-18 到期 250 Call</h4><div class="one">股价涨了，行权价跟着抬高，收的权利金示意 160 美元</div><div class="btn pri sm" onclick="toast('第二单沿用首单模式')">一键续做</div></div>
+ <div class="tpl"><h4>财报已过，换成保护浮盈</h4><div class="one">买 1 张 12-18 到期 210 Put，示意 420 美元，锁住已有浮盈</div><div class="btn sm" onclick="toast('第二单沿用首单模式')">看这一单</div></div></div>
+<div class="card"><h3>晒一下这单</h3><p>订单截图＋三句复盘（为什么做、最坏情况、结果），不展示金额。精选进新手指南案例库，得积分。</p><div class="btn sm" style="margin-top:6px" onclick="go('market')">去晒单</div></div>
+<div class="note">方案 4.1「做了」档、第六节第 3 个月：首单到期后 7 天内推「下一单」，第二单率是第 3 个月的核心指标。</div></div>`;
+
+V.guide=()=>`${hdr('期权新手指南','market')}<div class="sec">
+<div class="card" style="background:var(--blue2);border-color:var(--blue2)"><h3>四课学完，先用模拟盘做一单</h3><p>所有例子都用你持仓里的股票讲。新用户按顺序看，老用户按持仓股检索。</p><div class="prog" style="background:#fff"><i style="width:50%"></i></div><p>已看完 2 / 4</p></div>
+<div class="card">
+ <div class="course"><div class="ic">1</div><div style="flex:1"><b>期权是什么</b><small>「你持有的英伟达每个月其实可以帮你收一笔租」· 45 秒视频＋1 张图</small></div><span class="st">已看</span></div>
+ <div class="course"><div class="ic">2</div><div style="flex:1"><b>三种第一单</b><small>备兑开仓 / 保护性认沽 / 买入实值短期认购，每种一页损益图＋最坏情况</small></div><span class="st">已看</span></div>
+ <div class="course" onclick="go('templates')" style="cursor:pointer"><div class="ic">3</div><div style="flex:1"><b>真实案例库</b><small>财报前，持有英伟达的你，第一张期权可以这么做（${D.exp} 到期真实报价）</small></div><span class="st" style="color:var(--blue)">看 ›</span></div>
+ <div class="course" onclick="go('ask')" style="cursor:pointer"><div class="ic">4</div><div style="flex:1"><b>常见问题</b><small>来自新手提问区，每周更新；固定带「这单不适合谁」</small></div><span class="st" style="color:var(--blue)">看 ›</span></div>
+</div>
+<div class="btn green block" onclick="go('sim')">学完了，用模拟盘做一单</div>
+<div class="card" style="margin-top:10px"><h3>按你的持仓找</h3><p>英伟达 · 特斯拉 · 苹果 · 微软 ……每只股票一页：本周权利金水平、财报日、到期日、适合的第一单。</p></div>
+<div class="note">方案 4.1：四档内容沉淀成常驻入口（期权页顶部固定位，简中／繁中／英文），不只靠推送散发；指南末尾直接接模拟盘，不让用户学完没地方去。</div></div>`;
+
+V.market=()=>`${hdr('市场 · 期权')}<div class="sec">
+<div class="card" onclick="go('guide')" style="cursor:pointer;background:var(--blue2);border-color:var(--blue2)"><div class="row"><div><h3>期权新手指南</h3><p>四课学完做一单 · 已看 2/4</p></div><span style="font-size:20px;color:var(--blue)">›</span></div></div>
+<div class="card"><div class="row"><h3>本周持仓期权周报</h3><span class="tagline">每周一</span></div>
+ <div class="kv"><span>英伟达 · 100 股</span><b>240 Call 本周 ${(D.ccP*100).toFixed(0)} 美元 · 财报 ${D.earn}</b></div>
+ <div class="kv"><span>特斯拉 · 30 股</span><b>不足 100 股 · 实值认购一张 ≈ 86 股</b></div></div>
+<div class="card"><h3>行情日历：什么时候该看一眼</h3>
+ <div class="cal"><div class="d">${D.earn}</div><div><b>英伟达财报（预计）</b><br>财报前 5～10 个交易日：给持仓系安全带（保护性认沽）／财报前收一笔权利金（备兑）<br><a href="#" onclick="go('templates');return false">看第一单 ›</a></div></div>
+ <div class="cal"><div class="d">触发</div><div><b>持仓股单周涨 ≥10%</b><br>浮盈怎么锁一部分：备兑开仓</div></div>
+ <div class="cal"><div class="d">触发</div><div><b>自选股单日跌 ≥5%</b><br>想抄底又怕继续跌：买入实值短期认购</div></div></div>
+<div class="card"><div class="row"><h3>创作者带你做第一单</h3><span class="tagline o">老带新</span></div>
+ <div class="cm" style="border:0;padding:8px 0"><div class="u"><span>@英伟达认领人 · 期权创作者</span><span>本周</span></div><p><b>这只股票本周怎么用期权</b>：财报前我自己的 100 股怎么处理，240 还是 250 Call，为什么。</p></div>
+ <div class="kv"><span>首单答疑直播</span><b>11-10 20:00 · 用当周真实行情讲</b></div>
+ <div class="kv"><span>创作者奖励</span><b>按带动的首交人数算，不按阅读量</b></div></div>
+<div class="card"><div class="row"><h3>首单晒单 · 精选</h3><span class="tagline g">本周征稿：财报前我给持仓系了安全带</span></div>
+ <div class="cm" style="border:0;padding:8px 0"><div class="u"><span>@新手小王 · 首单</span><span>3 天前</span></div><p>为什么做：财报前怕回吐。最坏情况：涨过 240 少赚。结果：到期作废，权利金留下。</p><div class="ans"><b>运营精选</b> 已收录进指南第 3 课案例库 · +200 积分</div></div>
+ <p style="font-size:11.5px;color:#8f959e">晒单只展示结构和结果，不展示金额；固定带「期权买方可能亏光全部权利金」提示。</p></div>
+<div class="card" onclick="go('ask')" style="cursor:pointer"><div class="row"><div><h3>新手提问区</h3><p>24 小时内答 · 本周 37 个问题</p></div><span style="font-size:20px;color:var(--blue)">›</span></div></div>
+<div class="note">方案 4.2 行情日历、4.3 用户内容：官方按日历出题，用户内容让人看到「别人真的做了」。</div></div>`;
+
+V.ask=()=>`${hdr('新手提问区','market')}<div class="sec">
+<div class="card" style="padding:10px 14px"><div class="row"><input placeholder="问一个关于第一单的问题……" style="flex:1;border:0;font-size:13px;outline:0"><div class="btn sm pri" onclick="toast('已提交，24 小时内回答')">提问</div></div></div>
+<div class="cm"><div class="u"><span>@持仓型用户 · 已开通未下单</span><span>2 小时前</span></div><p>卖了 240 Call，股价涨到 260，我的股票是不是就没了？</p><div class="ans"><b>创作者回答</b>：股票按 240 卖出，权利金 145 照样是你的，账面上是「少赚」不是「亏」。不想被卖掉，可以到期前买回平仓。<br><span style="color:#8f959e">· 已沉淀进指南第 4 课</span></div></div>
+<div class="cm"><div class="u"><span>@看过未开通</span><span>昨天</span></div><p>230 Call 才 325 美元，为什么你们不推这个？</p><div class="ans"><b>运营回答</b>：要涨过 233.25 才开始赚，到期实值概率只有约四分之一，财报不及预期直接归零。第一单看胜率，不看赔率。<br><span style="color:#8f959e">· 已沉淀进指南第 4 课</span></div></div>
+<div class="cm"><div class="u"><span>@小额账户</span><span>昨天</span></div><p>我只有 8,000 美元，实值认购一张 2,593 买不起怎么办？</p><div class="ans"><b>运营回答</b>：换低价股的实值认购，或先走模拟盘。小额账户单笔权利金不超过净值 5%，这是首单保护。</div></div>
+<div class="note">方案 4.3：期权页固定提问入口，创作者和运营 24 小时内答；高频问题每周沉淀进新手指南第 4 课。</div></div>`;
+
+/* ===== 框架 ===== */
+const TABS=[['自选','☆','market'],['市场','◎','market'],['账户','▤','positions'],['发现','✦','guide'],['交易','⇄','order']];
+let cur='home';
+function go(id){if(!V[id])id='home';cur=id;document.getElementById('screen').innerHTML=V[id]();document.getElementById('screen').scrollTop=0;
+ document.getElementById('tabbar').innerHTML=TABS.map(t=>`<div class="${t[2]===id?'on':''}" onclick="go('${t[2]}')"><span>${t[1]}</span>${t[0]}</div>`).join('');
+ renderGuide();if(location.hash!=='#'+id)history.replaceState(null,'','#'+id);}
+function renderGuide(){const g=document.getElementById('guide');g.innerHTML=`<h1>期权首单 · 产品能力 Demo</h1><p>《期权未首交用户促转化：三个月方案》第三～六节落到产品上的样子。通用券商 App 示意，不代表任何真实产品；数据为 2026-10-29 美股收盘（英伟达 ${D.px}），不构成投资建议。</p>
+ <div class="list">${SCREENS.map(s=>`<div class="item ${s.id===cur?'on':''}" onclick="go('${s.id}')"><b>${s.name}</b><span class="tag">${s.tag}</span><div style="color:var(--sub);margin-top:2px">${s.note}</div></div>`).join('')}</div>
+ <div class="foot">每页右下「说明」灰字写了对应方案哪一条。页面地址带 #，可以直接链到某一页，例如 #order 是确认下单页。<br>英伟达 ${D.exp} 到期：240 Call ${D.ccP}、200 Put ${D.ppP}、190 Call ${D.itmP}（delta ${D.itmDelta}）、230 Call ${D.otmP}。</div>`;}
+function toast(t){const o=document.getElementById('overlay');const e=document.createElement('div');e.className='toast';e.textContent=t;o.appendChild(e);setTimeout(()=>e.remove(),1800);}
+function modal(h,p,btns){document.getElementById('overlay').innerHTML=`<div class="modal"><div class="box"><h4>${h}</h4><p>${p}</p><div class="btns">${btns.map((b,i)=>`<div class="btn ${i?'pri':''}" onclick="MB[${i}]()">${b[0]}</div>`).join('')}</div></div></div>`;window.MB=btns.map(b=>b[1]);}
+function closeModal(){document.getElementById('overlay').innerHTML='';}
+function reset(){Object.assign(ST,{opened:false,simDone:false,ordered:false,qty:1,quiz:[null,null,null],tab:'cc'});go('home');}
+window.addEventListener('hashchange',()=>go(location.hash.slice(1)||'home'));
+go(location.hash.slice(1)||'home');
+</script>
+</body>
+</html>
