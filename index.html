@@ -288,7 +288,7 @@ V.positions=()=>`<div class="nav"><span class="logo"></span><b>账户</b><span c
  <div class="kv"><span>两个都做（领口）</span><b>净花 ${((D.ppP-D.ccP)*100).toFixed(0)} 美元</b></div>
  <div class="btn pri block" style="margin-top:8px" onclick="go('templates')">看第一单怎么做</div></div>
 <div class="hrow"><div class="n"><b>特斯拉</b><small>TSLA</small></div><div>11,814.60<small>30</small></div><div>${D.tsla}<small>380.00</small></div><div class="dn">−284.10<small class="dn">−2.35%</small></div></div>
-<div class="addon" style="background:#f7f7f9"><span class="mark">${NEW}</span><div style="font-size:12.5px;color:#444;line-height:1.6">不到 100 股做不了备兑。想加仓又不想追高：买 1 张实值认购 ≈ 86 股的涨跌，占用只有买 100 股的一成多。<a href="#" onclick="ST.tab='itm';go('templates');return false">看怎么做 ›</a></div></div>
+<div class="addon" style="background:#f7f7f9"><span class="mark">${NEW}</span><div style="font-size:12.5px;color:#444;line-height:1.6">不到 100 股做不了备兑。想加仓又不想追高：买 1 张实值认购，涨跌接近买 80～90 股，占用只有买 100 股的一到两成。<a href="#" onclick="ST.tab='itm';go('templates');return false">看怎么做 ›</a></div></div>
 <div class="quick"><div><span>〰</span>报价</div><div><span>⊘</span>交易</div><div onclick="go('templates')" style="color:var(--or)"><span>▤</span>期权</div><div><span>◷</span>定投</div><div><span>⌁</span>盈亏</div><div><span>⇪</span>分享</div></div>
 `;
 
@@ -332,7 +332,7 @@ V.templates=()=>{
 
 const QUIZ=[
  {q:'你持有 100 股英伟达，卖了 1 张 240 Call 收 145 美元。到期那天股价 260，会发生什么？',o:['股票按 240 被卖掉，145 美元照样是我的','145 美元要退回去','我倒亏 2,000 美元'],a:0,e:'备兑的代价是「涨过行权价的那截让出去」：股票按 240 卖出，少赚 1,855 美元，但不会倒亏。'},
- {q:'你买了 1 张 200 Put 花 378 美元保护持仓，财报后股价涨到 230。这 378 美元？',o:['全部损失，相当于保险没出险','能拿回一半','跟股价一起涨'],a:0,e:'保护性认沽就是买保险：没出险，保费就是成本。你的 100 股涨了 1,634 美元，净赚 1,256 美元。'},
+ {q:'你持有 100 股英伟达，买了 1 张 200 Put 花 378 美元保护持仓，财报后股价涨到 230。这 378 美元？',o:['全部损失，相当于保险没出险','能拿回一半','跟股价一起涨'],a:0,e:'保护性认沽就是买保险：没出险，保费就是成本。你的 100 股涨了 1,634 美元，净赚 1,256 美元。'},
  {q:'你想再加仓 85 股左右的英伟达（约 18,000 美元），但只想先动用 3,000 美元。用期权怎么买更合适？',o:['买 1 张 190 Call（2,593 美元）：英伟达每涨 1 美元赚约 86 美元，跌破 190 才会亏光','买 8 张 230 Call（2,600 美元）：要涨过 233.25 才开始赚，不到就全部归零','买 1 张 230 Call（325 美元），剩下的钱等回调再买正股'],a:0,e:'买 1 张 190 Call 最接近「买 85 股」的效果：涨跌都跟着股价走，多付的只有 227 美元时间价值。8 张 230 Call 看着便宜，但英伟达到期不涨过 233.25 这 2,600 美元就全没了，财报不及预期更是直接归零。'}
 ];
 V.onboard=()=>{
@@ -448,7 +448,7 @@ V.market=()=>`<div class="nav"><span class="logo"></span><b>市场</b><span styl
 <div class="card" onclick="go('guide')" style="cursor:pointer;background:var(--or2)"><span class="mark">${NEW}</span><h3>期权新手指南</h3><p>四课学完做一单 · 已看 2/4 ›</p></div>
 <div class="card"><span class="mark">${NEW}</span><h3>本周持仓期权周报 <span class="chip">每周一</span></h3>
  <div class="kv"><span>英伟达 · 100 股</span><b>240 Call 本周 ${(D.ccP*100).toFixed(0)} 美元 · 财报 ${D.earn}</b></div>
- <div class="kv"><span>特斯拉 · 30 股</span><b>不足 100 股 · 实值认购一张 ≈ 86 股</b></div></div>
+ <div class="kv"><span>特斯拉 · 30 股</span><b>不足 100 股 · 实值认购一张接近 80～90 股</b></div></div>
 <div class="card"><span class="mark">${NEW}</span><h3>行情日历：什么时候该看一眼</h3>
  <div class="cal"><div class="d">${D.earn}</div><div><b>英伟达财报（预计）</b><br>财报前 5～10 个交易日：给持仓系安全带（保护性认沽）／财报前收一笔权利金（备兑）<br><a href="#" onclick="go('templates');return false">看第一单 ›</a></div></div>
  <div class="cal"><div class="d">触发</div><div><b>持仓股单周涨 ≥10%</b><br>浮盈怎么锁一部分：备兑开仓</div></div>
@@ -475,10 +475,10 @@ ${course('b','指数期权入门','必学的期权类型：指数期权','','8.1
 
 V.ask=()=>`${nav('新手提问区','market','')}<div class="sec">
 <div class="card" style="padding:10px 14px"><span class="mark">${NEW}</span><div style="display:flex;gap:8px;align-items:center"><input placeholder="问一个关于第一单的问题……" style="flex:1;border:0;font-size:13px;outline:0"><div class="btn sm pri" onclick="toast('已提交，24 小时内回答')">提问</div></div></div>
-<div class="cm"><div class="u"><span>@持仓型用户 · 已开通未下单</span><span>2 小时前</span></div><p>卖了 240 Call，股价涨到 260，我的股票是不是就没了？</p><div class="ans"><b>创作者回答</b>：股票按 240 卖出，权利金 145 照样是你的，账面上是「少赚」不是「亏」。不想被卖掉，可以到期前买回平仓。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
-<div class="cm"><div class="u"><span>@追涨型用户 · 已下首单</span><span>5 小时前</span></div><p>我买的 190 Call 到期那天还在实值，要行权吗？</p><div class="ans"><b>官方回答</b>：一般不行权。行权要拿 19,000 美元买 100 股，还白白丢掉剩下的时间价值。想继续拿就到期前平仓、再买下个月的；想拿一年以上，换成 2027 年 1 月到期的 180 Call。到期前 5 个交易日我们会提醒你。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
-<div class="cm"><div class="u"><span>@看过未开通</span><span>昨天</span></div><p>230 Call 才 325 美元，为什么你们不推这个？</p><div class="ans"><b>官方回答</b>：要涨过 233.25 才开始赚，财报不及预期会直接归零。想要接近买股票的效果，看 190 Call：涨跌跟着股价走，跌破 190 才亏光。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
-<div class="cm"><div class="u"><span>@小额账户</span><span>昨天</span></div><p>我只有 8,000 美元，实值认购一张 2,593 买不起怎么办？</p><div class="ans"><b>官方回答</b>：可以换一只价格低一些的股票做实值认购，或者先用模拟盘做一单。你的账户单笔权利金上限是净值的 5%。</div></div>
+<div class="cm"><div class="u"><span>@NV老张</span><span>2 小时前</span></div><p>卖了 240 Call，股价涨到 260，我的股票是不是就没了？</p><div class="ans"><b>创作者回答</b>：股票按 240 卖出，权利金 145 照样是你的，账面上是「少赚」不是「亏」。不想被卖掉，可以到期前买回平仓。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
+<div class="cm"><div class="u"><span>@小李想加仓</span><span>5 小时前</span></div><p>我买的 190 Call 到期那天还在实值，要行权吗？</p><div class="ans"><b>官方回答</b>：一般不行权。行权要拿 19,000 美元买 100 股，还白白丢掉剩下的时间价值。想继续拿就到期前平仓、再买下个月的；想拿一年以上，换成 2027 年 1 月到期的 180 Call。到期前 5 个交易日我们会提醒你。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
+<div class="cm"><div class="u"><span>@围观的阿杰</span><span>昨天</span></div><p>230 Call 才 325 美元，为什么你们不推这个？</p><div class="ans"><b>官方回答</b>：可以买，这是你自己的决定。我们推荐实值的 190 Call，是因为它更跟着正股走，受时间价值影响小；230 Call 要涨过 233.25 才开始赚，受时间价值影响大，波动大，财报不及预期可能归零。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
+<div class="cm"><div class="u"><span>@刚开户的May</span><span>昨天</span></div><p>我只有 8,000 美元，实值认购一张 2,593 买不起怎么办？</p><div class="ans"><b>官方回答</b>：一张 2,593 占你账户的三成多，不建议第一单就压这么重。可以换一只价格低一些的股票做实值认购，或者先用模拟盘做一单。</div></div>
 </div>`;
 
 
