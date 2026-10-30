@@ -207,13 +207,13 @@ body.marks .bd{display:inline-block}
 </div>
 <script>
 /* ===== 数据：2026-10-29 美股收盘（盈透 TWS 买卖中间价），与方案附件 A 一致 ===== */
-const D={px:213.66,prev:215.38,ccK:240,ccP:1.45,ppK:200,ppP:3.78,itmK:190,itmP:25.93,itmDelta:0.86,otmK:230,otmP:3.25,exp:'11-20',earn:'11-18',tsla:393.82};
+const D={px:213.66,prev:215.38,ccK:240,ccP:1.45,ppK:200,ppP:3.78,itmK:190,itmP:25.93,itmDelta:0.86,otmK:230,otmP:3.25,leapK:180,leapP:38.63,leapDelta:0.85,leapExp:'2027-01-15',exp:'11-20',earn:'11-18',tsla:393.82};
 const CAP=((D.ccK-D.px+D.ccP)*100).toFixed(0);
-const ST={opened:false,simDone:false,ordered:false,qty:1,quiz:[null,null,null],tab:'cc',sub:'first',more:false};
+const ST={opened:false,simDone:false,ordered:false,qty:1,quiz:[null,null,null],tab:'cc',sub:'first',more:false,hold:'short'};
 const fmt=n=>Number(n).toLocaleString('en-US');
 const NEW='<span class="bd new">方案新增</span>',MOD='<span class="bd mod">方案修改</span>',OLD='<span class="bd old">现有</span>';
 
-const EXPL={"home": "左边手机里只放用户看到的东西；每一页对应方案哪一节、改了什么、为什么，都写在这里。勾选上面的开关，手机里会标出「方案新增」「方案修改」。", "push": "<b>新增 · 方案 3.3 阶段、4.2 行情日历</b>同一个持仓型用户在三个阶段收到三条不同推送：未接触推「先收一笔」，看过未开通推模拟盘，已下首单推复盘。文案就是附件 A 第 8 节的推送文案。", "positions": "<b>新增 · 方案五-1 持仓页入口（P0）</b>账户页原样不动，只在每个持仓行下方加一张卡。卡里的数字是这只股票对应合约的真实报价（11-20 到期），点进去就是那张合约。不足 100 股的持仓给的是实值认购的入口。", "templates": "<b>新增「第一单」子页 · 方案五-2（P0）</b>放在期权链前面，合约按规则自动选：到期在财报后、备兑行权价比现价高 10%～12%、保护位比现价低 6%、实值认购 delta 0.8～0.9。用户不用看期权链。<br><b>修改「期权策略」子页</b>对未首交用户：加「我的持仓」一栏，备兑和保护性认沽排前两位，原来排第一的买入看涨收进「更多策略」，不删。<br><b>为什么实值不推虚值</b>230 Call 只要 325 美元，但要涨过 233.25 才赚，到期实值概率约四分之一，财报不及预期直接归零；190 Call 涨过 215.93 就赚、跌破 190 才亏光，效果接近买 86 股。这段话不给用户看，用户只看到「涨多少赚多少、最多亏多少」。", "onboard": "<b>修改 · 方案五-6 开通流程嵌教育（P1）</b>风险测评的合规要素不减，题目换成情景题，用用户持仓里的股票和今天的报价。第三题故意从用户的问题出发：「想加仓 85 股怎么买」，答案自然落在实值认购，不用跟用户讲「胜率、赔率」。答错也能开通，但解释会再出现一次。开通成功页直接给第一单，这是「已开通未下单」阶段最热的 3 天里的第 1 次触达。", "sim": "<b>新增 · 方案五-5 模拟盘（P1）、第六节首单任务阶梯</b>真实报价、同一张合约、同一个页面，只是不扣钱；到期自动结算并推复盘。看完小课 → 模拟一单 → 真实首单，每一步小额奖励（积分、免佣张数），不按交易量给奖。", "order": "<b>修改 · 方案五-3 最大亏损与损益图、五-4 首单保护（P0／P1）</b>现有下单页字段一个不少（代码、时段、类型、价格、张数、金额、条件、期限、止盈止损）。插入三样：张数上限（前 3 单每单 1 张，超限二次确认）、「最多亏多少、哪里开始赚」的图和数字、卖出前的风险勾选。方向按模板自动填（备兑＝卖出开仓）。首单模式是未首交用户的默认，专业版一键切回现有页面。", "review": "<b>新增 · 方案 4.1「做了」档、第六节第 3 个月</b>首单到期后 7 天内推复盘卡：这单结果、比只持股多赚多少、如果涨到 260 会怎样（讲清代价）。顺手给第二单二选一，第二单率是第 3 个月的核心指标。晒单入口接 4.3 用户内容。", "guide": "<b>新增 · 方案 4.1 官方内容</b>现有期权课堂七门课一门不动，顶部加「新手指南」四课，从用户自己的持仓讲起；第 3 课就是附件 A 的案例，第 4 课来自新手提问区。指南末尾直接接模拟盘，不让用户学完没地方去。", "market": "<b>新增 · 方案 4.2 行情日历、4.3 社区创作者</b>现有的异动、市场总览、期权课堂原样保留，上方插入五个模块：新手指南入口、持仓期权周报（每周一）、行情日历（财报前／大涨后／大跌后三种触发）、创作者老带新（创作者认领一只股票，周更一篇＋月度答疑直播；奖励按带动的首交人数算，不按阅读量）、首单晒单精选（只展示结构和结果，不展示金额，带风险提示）。", "tasks": "<b>新增 · 方案 6.1 任务中心</b>照任务中心现有的「交易挑战」样式加一个「期权第一单」专区。奖励按学 → 模拟 → 开通 → 首单 → 第二单逐级加码，首单 2,000 最高，第二单 1,500；「三件套挑战」是拐点奖：备兑、保护性认沽、实值认购各做过 1 次，1 种 800、2 种 2,000、3 种 5,000，每次限 1 张。全部按「做没做」给，不按笔数、张数、金额给，和「7 天完成 3 笔」这类凑数任务刻意区分。只发积分和免佣，不发现金。", "camp": "<b>新增 · 方案 6.2 期权训练营</b>线上四周：每周 1 次直播＋1 次模拟盘作业，第 1 期第 2 个月初开营对准 11-18 财报，每期 500 人，官方讲师＋期权创作者带班，完成 3 次作业结业。线下工作坊香港每月 1 场 30 人，学员带自己的持仓现场在模拟盘做一遍，客户经理邀约中额以上持仓型用户。衡量：学员首交率对比同分层未报名者，报名者随机留 10% 不入营做对照。", "ask": "<b>新增 · 方案 4.3 用户内容</b>期权页固定提问入口，创作者和运营 24 小时内答。高频问题每周沉淀进新手指南第 4 课，用户端显示为「已收录进新手指南」。回答全部用用户听得懂的话，不出现「胜率、赔率、delta」这类词。"};
+const EXPL={"home": "左边手机里只放用户看到的东西；每一页对应方案哪一节、改了什么、为什么，都写在这里。勾选上面的开关，手机里会标出「方案新增」「方案修改」。", "push": "<b>新增 · 方案 3.3 阶段、4.2 行情日历</b>同一个持仓型用户在三个阶段收到三条不同推送：未接触推「先收一笔」，看过未开通推模拟盘，已下首单推复盘。文案就是附件 A 第 8 节的推送文案。", "positions": "<b>新增 · 方案五-1 持仓页入口（P0）</b>账户页原样不动，只在每个持仓行下方加一张卡。卡里的数字是这只股票对应合约的真实报价（11-20 到期），点进去就是那张合约。不足 100 股的持仓给的是实值认购的入口。", "templates": "<b>新增「第一单」子页 · 方案五-2（P0）</b>放在期权链前面，合约按规则自动选：到期在财报后、备兑行权价比现价高 10%～12%、保护位比现价低 6%、实值认购 delta 0.8～0.9。用户不用看期权链。<br><b>修改「期权策略」子页</b>对未首交用户：加「我的持仓」一栏，备兑和保护性认沽排前两位，原来排第一的买入看涨收进「更多策略」，不删。<br><b>短期还是长期</b>实值认购先问「打算拿多久」：几周到两个月用 11-20 这类短期合约，到期前平仓或滚动，不行权（行权要全款买 100 股，还丢掉时间价值）；一年以上用 2027-01-15 到期的 180 Call，一张 3,863 美元，delta 0.85，14 个月时间价值只有 497 美元，约 35 美元一个月，比短期合约 22 天 227 美元便宜得多。到期前 5 个交易日提醒平仓或滚动，是新手最容易卡住的一步。<br><b>为什么实值不推虚值</b>230 Call 只要 325 美元，但要涨过 233.25 才赚，到期实值概率约四分之一，财报不及预期直接归零；190 Call 涨过 215.93 就赚、跌破 190 才亏光，效果接近买 86 股。这段话不给用户看，用户只看到「涨多少赚多少、最多亏多少」。", "onboard": "<b>修改 · 方案五-6 开通流程嵌教育（P1）</b>风险测评的合规要素不减，题目换成情景题，用用户持仓里的股票和今天的报价。第三题故意从用户的问题出发：「想加仓 85 股怎么买」，答案自然落在实值认购，不用跟用户讲「胜率、赔率」。答错也能开通，但解释会再出现一次。开通成功页直接给第一单，这是「已开通未下单」阶段最热的 3 天里的第 1 次触达。", "sim": "<b>新增 · 方案五-5 模拟盘（P1）、第六节首单任务阶梯</b>真实报价、同一张合约、同一个页面，只是不扣钱；到期自动结算并推复盘。看完小课 → 模拟一单 → 真实首单，每一步小额奖励（积分、免佣张数），不按交易量给奖。", "order": "<b>修改 · 方案五-3 最大亏损与损益图、五-4 首单保护（P0／P1）</b>首单保护提示里带上「亏了返一半」的兜底券，让用户在下单那一刻知道最坏情况有人兜。现有下单页字段一个不少（代码、时段、类型、价格、张数、金额、条件、期限、止盈止损）。插入三样：张数上限（前 3 单每单 1 张，超限二次确认）、「最多亏多少、哪里开始赚」的图和数字、卖出前的风险勾选。方向按模板自动填（备兑＝卖出开仓）。首单模式是未首交用户的默认，专业版一键切回现有页面。", "review": "<b>新增 · 方案 4.1「做了」档、第六节第 3 个月</b>首单到期后 7 天内推复盘卡：这单结果、比只持股多赚多少、如果涨到 260 会怎样（讲清代价）。顺手给第二单二选一，第二单率是第 3 个月的核心指标。晒单入口接 4.3 用户内容。", "guide": "<b>新增 · 方案 4.1 官方内容</b>现有期权课堂七门课一门不动，顶部加「新手指南」四课，从用户自己的持仓讲起；第 3 课就是附件 A 的案例，第 4 课来自新手提问区。指南末尾直接接模拟盘，不让用户学完没地方去。", "market": "<b>新增 · 方案 4.2 行情日历、4.3 社区创作者</b>现有的异动、市场总览、期权课堂原样保留，上方插入五个模块：新手指南入口、持仓期权周报（每周一）、行情日历（财报前／大涨后／大跌后三种触发）、创作者老带新（创作者认领一只股票，周更一篇＋月度答疑直播；奖励按带动的首交人数算，不按阅读量）、首单晒单精选（只展示结构和结果，不展示金额，带风险提示）。", "tasks": "<b>新增 · 方案 6.1 任务中心</b>照任务中心现有的「交易挑战」样式加一个「期权第一单」专区。奖励按学 → 模拟 → 开通 → 首单 → 第二单逐级加码，首单 2,000 最高，第二单 1,500。首单多一层兜底：到期亏了，亏损的一半以现金券返还，上限 100 美元，只能抵交易费用，限首单保护内的 1 张合约，刷不了。全部按「做没做」给，不按笔数、张数、金额、策略类型给；备兑、保护性认沽、实值认购只是推荐，不做成任务。兜底券要先过合规（是否构成诱导交易衍生品），过不了退到「亏损抵扣未来佣金」。", "camp": "<b>新增 · 方案 6.2 期权训练营</b>线上四周：每周 1 次直播＋1 次模拟盘作业，第 1 期第 2 个月初开营对准 11-18 财报，每期 500 人，官方讲师＋期权创作者带班，完成 3 次作业结业。线下工作坊香港每月 1 场 30 人，学员带自己的持仓现场在模拟盘做一遍，客户经理邀约中额以上持仓型用户。衡量：学员首交率对比同分层未报名者，报名者随机留 10% 不入营做对照。", "ask": "<b>新增 · 方案 4.3 用户内容</b>期权页固定提问入口，创作者和运营 24 小时内答。高频问题每周沉淀进新手指南第 4 课，用户端显示为「已收录进新手指南」。回答全部用用户听得懂的话，不出现「胜率、赔率、delta」这类词。新加一条「到期还在实值要行权吗」，这是实值认购新手最常卡住的一步。"};
 const SCREENS=[
  {id:'home',name:'导览：按用户的路径点下去',tag:'全文',note:'从一条推送开始，走到第二单。'},
  {id:'push',name:'① 分层推送（锁屏通知）',tag:'3.3 阶段 · 4.2 行情日历',note:'同一个人在不同阶段收到的不是同一条。'},
@@ -226,7 +226,7 @@ const SCREENS=[
  {id:'guide',name:'⑧ 期权课堂：顶部加「新手指南」',tag:'4.1 官方内容',note:'现有课程保留；新增四课从用户持仓讲起，末尾接模拟盘。'},
  {id:'market',name:'⑨ 市场 · 期权 Tab：加周报与日历',tag:'4.2 行情日历 · 4.3 社区创作者',note:'现有异动、市场总览、期权课堂保留；上方新增持仓周报、行情日历、创作者老带新。'},
  {id:'ask',name:'⑩ 新手提问区',tag:'4.3 用户内容',note:'24 小时内答，高频问题沉淀进指南第 4 课。'},
- {id:'tasks',name:'⑪ 任务中心：期权第一单专区',tag:'6.1 任务中心',note:'首单最丰厚，第二单同样有礼，三件套拐点奖。'},
+ {id:'tasks',name:'⑪ 任务中心：期权第一单专区',tag:'6.1 任务中心',note:'首单最丰厚并有亏损兜底，第二单同样有礼。'},
  {id:'camp',name:'⑫ 期权训练营',tag:'6.2 官方课程',note:'线上四周对准财报季，线下小班用自己的持仓做一遍。'},
 ];
 
@@ -236,13 +236,14 @@ function payoff(type,w=330,h=120){
     if(type==='cc') y=(Math.min(s,D.ccK)-D.px+D.ccP)*100;
     else if(type==='pp') y=(Math.max(s,D.ppK)-D.px-D.ppP)*100;
     else if(type==='itm') y=(Math.max(s-D.itmK,0)-D.itmP)*100;
+    else if(type==='leap') y=(Math.max(s-D.leapK,0)-D.leapP)*100;
     else y=(s-D.px)*100; xs.push(s);ys.push(y);}
   const stock=xs.map(s=>(s-D.px)*100);
   const ymin=Math.min(...ys,...stock),ymax=Math.max(...ys,...stock);
   const X=s=>12+(s-lo)/(hi-lo)*(w-24), Y=v=>10+(ymax-v)/(ymax-ymin)*(h-30);
   const path=a=>a.map((v,i)=>(i?'L':'M')+X(xs[i]).toFixed(1)+','+Y(v).toFixed(1)).join(' ');
-  const col={cc:'#ff6a00',pp:'#2d7cf6',itm:'#1ab36a'}[type];
-  const be={cc:D.px-D.ccP,pp:D.px+D.ppP,itm:D.itmK+D.itmP}[type];
+  const col={cc:'#ff6a00',pp:'#2d7cf6',itm:'#1ab36a',leap:'#1ab36a'}[type];
+  const be={cc:D.px-D.ccP,pp:D.px+D.ppP,itm:D.itmK+D.itmP,leap:D.leapK+D.leapP}[type];
   const pos=ys.map((v,i)=>v>=0?`${X(xs[i]).toFixed(1)},${Y(v).toFixed(1)}`:null).filter(Boolean);
   return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="display:block">
    <line x1="12" x2="${w-12}" y1="${Y(0)}" y2="${Y(0)}" stroke="#ccc"/>
@@ -252,7 +253,7 @@ function payoff(type,w=330,h=120){
    <circle cx="${X(be)}" cy="${Y(0)}" r="3.5" fill="${col}"/>
    <text x="${X(D.px)+3}" y="18" font-size="9" fill="#666">现价 ${D.px}</text>
    <text x="${Math.min(X(be)+4,w-70)}" y="${Y(0)-6}" font-size="9" fill="${col}">${be.toFixed(2)} 开始赚</text>
-   <text x="12" y="${h-4}" font-size="8.5" fill="#999">灰虚线＝只持 100 股 · 横轴＝到期日 ${D.exp} 股价 170～280 美元</text></svg>`;
+   <text x="12" y="${h-4}" font-size="8.5" fill="#999">灰虚线＝只持 100 股 · 横轴＝到期日 ${type==='leap'?D.leapExp:D.exp} 股价 170～280 美元</text></svg>`;
 }
 
 const V={};
@@ -296,7 +297,7 @@ V.templates=()=>{
  const tpl={
   cc:{h:'备兑开仓',one:'怕它不涨，想顺手收点钱 · 已有 100 股，推荐',ct:`持有 100 股不动，<b>卖出 1 张 NVDA ${D.exp} 到期 240 Call</b>，先收 <b>${(D.ccP*100).toFixed(0)} 美元</b>（约股价的 0.7%，22 天）`,worst:`股价涨过 240，超出部分归买方，收益封顶 ${fmt(CAP)} 美元；股票下跌时亏损和持股一样，只是少亏 ${(D.ccP*100).toFixed(0)}。`,type:'cc',rec:true},
   pp:{h:'保护性认沽',one:'怕财报砸盘 · 浮盈大、财报前睡不着的人',ct:`持有 100 股不动，<b>买入 1 张 NVDA ${D.exp} 到期 200 Put</b>，先花 <b>${(D.ppP*100).toFixed(0)} 美元</b>（约股价的 1.8%）`,worst:`股价不跌，${(D.ppP*100).toFixed(0)} 美元全部损失，相当于买了保险没出险；跌破 200 后每跌 1 美元，Put 赚回 100 美元。`,type:'pp'},
-  itm:{h:'买入实值认购',one:'想加仓又不想一次花 2 万 · 效果接近买 85 股',ct:`<b>买入 1 张 NVDA ${D.exp} 到期 190 Call</b>，一张 <b>${fmt((D.itmP*100).toFixed(0))} 美元</b>。英伟达每涨 1 美元你赚约 86 美元，跌 1 美元亏约 86 美元，和持有 86 股差不多；买 86 股要 ${fmt((D.px*86).toFixed(0))} 美元`,worst:`涨过 ${(D.itmK+D.itmP).toFixed(2)}（比现价高 1.1%）就开始赚；跌破 190 才会亏光 ${fmt((D.itmP*100).toFixed(0))} 美元，再跌也不会多亏。多付的成本只有 227 美元（时间价值）。`,type:'itm'}
+  itm:(ST.hold==='long'?{h:'买入实值认购 · 长期',one:'打算拿一年以上 · 效果接近买 85 股，占用只有两成',ct:`<b>买入 1 张 NVDA ${D.leapExp} 到期 180 Call</b>，一张 <b>${fmt((D.leapP*100).toFixed(0))} 美元</b>。英伟达每涨 1 美元你赚约 85 美元，和持有 85 股差不多；买 85 股要 ${fmt((D.px*85).toFixed(0))} 美元。14 个月的时间价值只有 ${((D.leapP-(D.px-D.leapK))*100).toFixed(0)} 美元，约 35 美元一个月`,worst:`到期涨过 ${(D.leapK+D.leapP).toFixed(2)} 就开始赚；跌破 180 才会亏光 ${fmt((D.leapP*100).toFixed(0))} 美元，再跌也不会多亏。到期前三个月我们提醒你滚到下一年，不用行权。`,type:'leap'}:{h:'买入实值认购 · 短期',one:'打算拿几周到两个月 · 效果接近买 85 股',ct:`<b>买入 1 张 NVDA ${D.exp} 到期 190 Call</b>，一张 <b>${fmt((D.itmP*100).toFixed(0))} 美元</b>。英伟达每涨 1 美元你赚约 86 美元，跌 1 美元亏约 86 美元，和持有 86 股差不多；买 86 股要 ${fmt((D.px*86).toFixed(0))} 美元`,worst:`涨过 ${(D.itmK+D.itmP).toFixed(2)}（比现价高 1.1%）就开始赚；跌破 190 才会亏光 ${fmt((D.itmP*100).toFixed(0))} 美元，再跌也不会多亏。多付的成本只有 227 美元（时间价值）。到期前 5 个交易日我们提醒你平仓或滚到下个月，不用行权。`,type:'itm'})
  }[t];
  const head=`<div class="nav"><span class="back" onclick="go('positions')">‹</span><b style="font-size:17px">NVDA 英伟达 ▾</b><span class="ic">🔍</span><span class="ic">♡</span><span class="home" onclick="go('home')">导览</span></div>
  <div class="hd2"><div class="px">收盘 ${D.px.toFixed(3)} ↓ −${(D.prev-D.px).toFixed(3)} −${((D.prev-D.px)/D.prev*100).toFixed(2)}%</div></div>
@@ -323,7 +324,7 @@ V.templates=()=>{
  return head+`
  <div class="scard" style="margin-top:8px;padding:10px 14px"><span class="mark">${NEW}</span><div style="padding-right:64px"><b style="font-size:14.5px">从你的持仓出发的第一单</b><p style="font-size:12px;color:#666;margin-top:2px">你持有 100 股（持仓型）· 财报 ${D.earn} · 到期 ${D.exp}（22 天，财报后）</p></div></div>
  <div class="seg"><div class="${t==='cc'?'on':''}" onclick="ST.tab='cc';go('templates')">备兑开仓</div><div class="${t==='pp'?'on':''}" onclick="ST.tab='pp';go('templates')">保护性认沽</div><div class="${t==='itm'?'on':''}" onclick="ST.tab='itm';go('templates')">实值认购</div></div>
- <div class="scard" style="margin-top:0;${tpl.rec?'border:1.5px solid var(--or)':''}"><h4>${tpl.h}${tpl.rec?' <span class="chip" style="background:var(--or2);color:var(--or)">按你的持仓推荐</span>':''}</h4><div class="sub">${tpl.one}</div>
+ ${t==='itm'?`<div class="frow" style="padding:4px 14px 8px"><span>打算拿多久</span><div class="seg" style="flex:1;margin:0"><div class="${ST.hold==='short'?'on':''}" onclick="ST.hold='short';go('templates')">几周到 2 个月</div><div class="${ST.hold==='long'?'on':''}" onclick="ST.hold='long';go('templates')">1 年以上</div></div></div>`:''}<div class="scard" style="margin-top:0;${tpl.rec?'border:1.5px solid var(--or)':''}"><h4>${tpl.h}${tpl.rec?' <span class="chip" style="background:var(--or2);color:var(--or)">按你的持仓推荐</span>':''}</h4><div class="sub">${tpl.one}</div>
   <div style="font-size:12.5px;background:#f7f7f9;border-radius:8px;padding:8px 10px;line-height:1.6">${tpl.ct}</div>
   ${payoff(tpl.type)}
   <div class="warn"><b>最坏情况：</b>${tpl.worst}</div>
@@ -374,7 +375,7 @@ V.order=()=>{
  <div style="background:#fdf1e6;color:#7a4a00;font-size:12px;padding:6px 14px">美国冬令时交易时间调整提示 ⓘ</div>
  <div style="background:#fff;padding:8px 14px;font-size:14px;color:#333;border-bottom:1px solid #f3f3f5">▣ 保证金综合账户(1918)</div>`;
  if(!ST.opened) return head+`<div class="sec"><div class="card" style="text-align:center;padding:24px 14px"><div style="font-size:36px">🔒</div><h3 style="margin-top:6px">还没开通期权权限</h3><p>三道情景题，两分钟。</p><div class="btn pri" style="margin-top:10px" onclick="go('onboard')">去开通</div></div></div>`;
- if(ST.ordered) return head+`<div class="sec"><div class="card" style="text-align:center;padding:24px 14px"><div style="font-size:40px">🎉</div><h3 style="margin-top:6px">第一单已提交</h3><p>卖出 1 张 NVDA ${D.exp} 240 Call，先收 ${(D.ccP*100).toFixed(0)} 美元。到期 ${D.exp}，到期后 7 天内给你复盘卡片。</p><div class="kv" style="text-align:left"><span>任务「首次完成期权交易」</span><b class="up">+2,000 积分 · 免佣 1 张已到账</b></div><div class="btn pri" style="margin-top:10px" onclick="go('review')">模拟时间快进：看到期复盘</div></div></div>`;
+ if(ST.ordered) return head+`<div class="sec"><div class="card" style="text-align:center;padding:24px 14px"><div style="font-size:40px">🎉</div><h3 style="margin-top:6px">第一单已提交</h3><p>卖出 1 张 NVDA ${D.exp} 240 Call，先收 ${(D.ccP*100).toFixed(0)} 美元。到期 ${D.exp}，到期后 7 天内给你复盘卡片。</p><div class="kv" style="text-align:left"><span>任务「首次完成期权交易」</span><b class="up">+2,000 积分 · 免佣 1 张已到账</b></div><div class="kv" style="text-align:left"><span>首单亏损兜底</span><b>已生效：到期亏了返一半，上限 100 美元</b></div><div class="btn pri" style="margin-top:10px" onclick="go('review')">模拟时间快进：看到期复盘</div></div></div>`;
  return head+`
  <div class="seg" style="margin:8px 14px 4px"><div class="on">首单模式${NEW}</div><div onclick="toast('已切换到专业版')">专业版</div></div>
  <div class="oform">
@@ -385,7 +386,7 @@ V.order=()=>{
   <div class="orow"><span>类型</span><div class="in"><span>限价单</span><span>⌄</span></div></div>
   <div class="orow"><span>价格</span><div class="in step"><div class="stepper"><div>−</div><span>${D.ccP.toFixed(2)}</span><div>＋</div></div></div></div>
   <div class="orow"><span>合约张数<br><small style="font-size:10px;color:#999">x100股</small></span><div class="in step"><div class="stepper"><div onclick="qty(-1)">−</div><span>${ST.qty}</span><div onclick="qty(1)">＋</div></div></div></div>
-  <div style="font-size:11px;color:var(--or);padding:2px 0 4px 72px">首 3 单每单最多 1 张 <span class="chip" style="background:var(--or2);color:var(--or)">首单保护</span></div>
+  <div style="font-size:11px;color:var(--or);padding:2px 0 4px 72px">首 3 单每单最多 1 张 · 首单亏了返一半（上限 100 美元现金券） <span class="chip" style="background:var(--or2);color:var(--or)">首单保护</span></div>
   <div class="orow"><span>金额</span><div class="in" style="border:0;padding-left:0"><span style="font-size:16px">${(D.ccP*100*ST.qty).toFixed(2)} USD <span style="font-size:12px;color:var(--up)">先收</span></span></div></div>
  </div>
  <div class="card" style="margin:8px 12px 0"><span class="mark">${NEW}</span><h3>最多亏多少、哪里开始赚</h3>
@@ -411,11 +412,12 @@ V.review=()=>`${nav('你的第一张备兑到期了','push','')}<div class="sec"
  <div class="kv"><span>这一单的结果</span><b class="up">权利金 ${(D.ccP*100).toFixed(0)} 美元留下</b></div>
  <div class="kv"><span>比只持股</span><b class="up">多赚 ${(D.ccP*100).toFixed(0)} 美元</b></div>
  <div class="kv"><span>如果股价到了 260</span><b>你会少赚 1,855，这是备兑的代价</b></div>
+ <div class="kv"><span>首单亏损兜底</span><b>本单盈利，未触发</b></div>
  <p style="margin-top:8px">一句话：这 22 天你把「涨过 240 的那截」卖了 ${(D.ccP*100).toFixed(0)} 美元，它没涨到，钱白收。这不是稳赚，是一笔划算的交换。</p></div>
 <div class="card"><h3>下一单，二选一 <span class="chip" style="background:var(--or2);color:var(--or)">第二单 +1,500</span></h3>
  <div class="scard" style="margin:0 0 8px;border:1.5px solid var(--or);padding:10px 12px"><h4 style="font-size:14px">继续备兑 · 12-18 到期 250 Call</h4><div class="sub">股价涨了，行权价跟着抬高，收的权利金示意 160 美元</div><div class="btn pri sm" onclick="toast('第二单沿用首单模式')">一键续做</div></div>
  <div class="scard" style="margin:0;padding:10px 12px;border:1px solid #eee"><h4 style="font-size:14px">财报已过，换成保护浮盈</h4><div class="sub">买 1 张 12-18 到期 210 Put，示意 420 美元，锁住已有浮盈</div><div class="btn sm" onclick="toast('第二单沿用首单模式')">看这一单</div></div></div>
-<div class="card"><h3>晒一下这单</h3><p>订单截图＋三句复盘（为什么做、最坏情况、结果）。精选进新手指南案例库，得 200 积分。</p><div class="btn sm" style="margin-top:6px" onclick="go('market')">去晒单</div></div>
+<div class="card"><h3>晒一下这单 <span class="chip" style="background:var(--or2);color:var(--or)">期权首单</span></h3><p>订单截图＋三句复盘（为什么做、最坏情况、结果），自动带「期权首单」标识和「收了 145 美元」。精选进新手指南案例库，得 200 积分。</p><div class="btn sm" style="margin-top:6px" onclick="go('market')">去晒单</div></div>
 </div>`;
 
 const course=(cls,tag,t,s,v,badge='',go_='')=>`<div class="course" ${go_?`onclick="go('${go_}')" style="cursor:pointer"`:''}><div class="th ${cls}">${tag}</div><div style="flex:1"><b>${t}${badge}</b><small>${s}</small><span class="v">👁 ${v}</span></div></div>`;
@@ -424,7 +426,7 @@ V.guide=()=>`${nav('期权','market','<span class="ic">🔍</span>')}
 <div class="sh">新手指南：从你的持仓开始 ${NEW}</div>
 <div style="padding:0 14px 8px;font-size:12.5px;color:#666;line-height:1.6">四课学完，先用模拟盘做一单。所有例子都用你持仓里的股票讲。已看完 2 / 4<div class="prog" style="margin:6px 0 0"><i style="width:50%"></i></div></div>
 ${course('o','第 1 课','期权是什么','「你持有的英伟达每个月其实可以帮你收一笔租」· 45 秒视频＋1 张图','已看')}
-${course('o','第 2 课','三种第一单','备兑开仓 / 保护性认沽 / 买入实值短期认购，每种一页损益图＋最坏情况','已看')}
+${course('o','第 2 课','三种第一单','备兑开仓 / 保护性认沽 / 买入实值认购（短期或一年以上），每种一页损益图＋最坏情况','已看')}
 ${course('o','第 3 课','真实案例库','财报前，持有英伟达的你，第一张期权可以这么做（11-20 到期真实报价）','本周更新','','templates')}
 ${course('o','第 4 课','常见问题','来自新手提问区，每周更新；固定带「这单不适合谁」','每周更新','','ask')}
 <div style="padding:10px 14px;background:#fff"><div class="btn pri block" onclick="go('sim')">学完了，用模拟盘做一单（+300 积分）</div></div>
@@ -457,10 +459,10 @@ V.market=()=>`<div class="nav"><span class="logo"></span><b>市场</b><span styl
  <div class="kv"><span>首单答疑直播</span><b>11-10 20:00 · 用当周真实行情讲</b></div>
  <div class="kv"><span>跟着做首单</span><b>已有 128 人完成 · 加入 ›</b></div></div>
 <div class="card"><span class="mark">${NEW}</span><h3>首单晒单 · 精选</h3><p style="margin-bottom:4px">本周征稿：财报前我给持仓系了安全带</p>
- <div class="cm" style="padding:8px 0"><div class="u"><span>@新手小王 · 首单</span><span>3 天前</span></div><p>为什么做：财报前怕回吐。最坏情况：涨过 240 少赚。结果：到期作废，权利金留下。</p><div class="ans"><b>精选</b> 已收录进新手指南案例库 · +200 积分</div></div>
- <p style="font-size:11.5px;color:#999">参与：订单截图＋三句复盘，不展示金额。期权买方可能亏光全部权利金，请注意风险。</p></div>
+ <div class="cm" style="padding:8px 0"><div class="u"><span>@新手小王 <span class="chip" style="background:var(--or2);color:var(--or)">期权首单</span></span><span>3 天前</span></div><p>为什么做：财报前怕回吐。最坏情况：涨过 240 少赚 1,855。结果：到期作废，<b class="up">收了 145 美元</b>。</p><div class="ans"><b>精选</b> 已收录进新手指南案例库 · +200 积分</div></div>
+ <p style="font-size:11.5px;color:#999">参与：订单截图＋三句复盘，自动带「期权首单」标识。期权买方可能亏光全部权利金，请注意风险。</p></div>
 <div class="card" onclick="go('camp')" style="cursor:pointer;background:linear-gradient(135deg,#1c1f2b,#3a3f55);color:#fff"><span class="mark">${NEW}</span><h3 style="color:#fff">期权训练营 第 1 期 · 报名中</h3><p style="color:#fff;opacity:.9">四周做成你的第一单 · 11-03 开营 · 剩 88 席 ›</p></div>
-<div class="card" onclick="go('tasks')" style="cursor:pointer"><span class="mark">${NEW}</span><h3>任务中心 · 期权第一单 <span class="chip" style="background:var(--or2);color:var(--or)">首单 +2,000</span></h3><p>学一课 +200 · 模拟一单 +300 · 开通 +500 · 首单 +2,000 并免佣 ›</p></div>
+<div class="card" onclick="go('tasks')" style="cursor:pointer"><span class="mark">${NEW}</span><h3>任务中心 · 期权第一单 <span class="chip" style="background:var(--or2);color:var(--or)">首单 +2,000</span></h3><p>学一课 +200 · 模拟一单 +300 · 开通 +500 · 首单 +2,000 并免佣，亏了返一半 ›</p></div>
 <div class="card" onclick="go('ask')" style="cursor:pointer"><span class="mark">${NEW}</span><h3>新手提问区</h3><p>24 小时内答 · 本周 37 个问题 ›</p></div>
 </div>
 <div class="sh">异动 ${OLD}</div>
@@ -475,6 +477,7 @@ ${course('b','指数期权入门','必学的期权类型：指数期权','','8.1
 V.ask=()=>`${nav('新手提问区','market','')}<div class="sec">
 <div class="card" style="padding:10px 14px"><span class="mark">${NEW}</span><div style="display:flex;gap:8px;align-items:center"><input placeholder="问一个关于第一单的问题……" style="flex:1;border:0;font-size:13px;outline:0"><div class="btn sm pri" onclick="toast('已提交，24 小时内回答')">提问</div></div></div>
 <div class="cm"><div class="u"><span>@持仓型用户 · 已开通未下单</span><span>2 小时前</span></div><p>卖了 240 Call，股价涨到 260，我的股票是不是就没了？</p><div class="ans"><b>创作者回答</b>：股票按 240 卖出，权利金 145 照样是你的，账面上是「少赚」不是「亏」。不想被卖掉，可以到期前买回平仓。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
+<div class="cm"><div class="u"><span>@追涨型用户 · 已下首单</span><span>5 小时前</span></div><p>我买的 190 Call 到期那天还在实值，要行权吗？</p><div class="ans"><b>官方回答</b>：一般不行权。行权要拿 19,000 美元买 100 股，还白白丢掉剩下的时间价值。想继续拿就到期前平仓、再买下个月的；想拿一年以上，换成 2027 年 1 月到期的 180 Call。到期前 5 个交易日我们会提醒你。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
 <div class="cm"><div class="u"><span>@看过未开通</span><span>昨天</span></div><p>230 Call 才 325 美元，为什么你们不推这个？</p><div class="ans"><b>官方回答</b>：要涨过 233.25 才开始赚，财报不及预期会直接归零。想要接近买股票的效果，看 190 Call：涨跌跟着股价走，跌破 190 才亏光。<br><span style="color:#999">· 已收录进新手指南</span></div></div>
 <div class="cm"><div class="u"><span>@小额账户</span><span>昨天</span></div><p>我只有 8,000 美元，实值认购一张 2,593 买不起怎么办？</p><div class="ans"><b>官方回答</b>：可以换一只价格低一些的股票做实值认购，或者先用模拟盘做一单。你的账户单笔权利金上限是净值的 5%。</div></div>
 </div>`;
@@ -484,18 +487,15 @@ const tier=(labels,pts,done)=>`<div style="position:relative;margin:14px 4px 4px
 const task=(t,p,st,btn,act,sub='')=>`<div style="display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #f3f3f5"><div style="flex:1"><div style="font-size:15px">${t}</div><div style="font-size:12.5px;color:#666;margin-top:3px"><span style="color:var(--or)">🪙 +${p}</span>${sub?' ｜ '+sub:''}${st?' ｜ '+st:''}</div></div>${btn?`<div class="btn ${btn==='去完成'?'':'pri'} sm" style="min-width:76px" onclick="${act}">${btn}</div>`:`<span style="font-size:12.5px;color:#999">已完成</span>`}</div>`;
 V.tasks=()=>`${nav('任务中心','market','<span style="font-size:13px;color:var(--blue)">已完成</span>')}
 <div class="sec">
-<div class="card" style="background:linear-gradient(135deg,#ff6a00,#ff9a3c);color:#fff"><div style="font-size:12.5px;opacity:.9">期权第一单专区</div><div style="font-size:22px;font-weight:700;margin:4px 0">第一单最丰厚，第二单同样有礼</div><div style="font-size:12.5px;opacity:.95">按步骤来，每一步都有积分；首单 +2,000 并免佣 1 张</div></div>
+<div class="card" style="background:linear-gradient(135deg,#ff6a00,#ff9a3c);color:#fff"><div style="font-size:12.5px;opacity:.9">期权第一单专区</div><div style="font-size:22px;font-weight:700;margin:4px 0">第一单最丰厚，第二单同样有礼</div><div style="font-size:12.5px;opacity:.95">按步骤来，每一步都有积分；首单 +2,000、免佣 1 张，亏了还返一半</div></div>
 <div class="card"><h3>期权第一单</h3>
  ${task('看完新手指南前两课',200,'已完成 2/2','','')}
  ${task('模拟盘做一单',300,ST.simDone?'已完成 1/1':'已完成 0/1',ST.simDone?'':'去完成',"go('sim')")}
  ${task('开通期权权限',500,ST.opened?'已完成 1/1':'已完成 0/1',ST.opened?'':'去完成',"go('onboard')")}
- ${task('首次完成期权交易 <span class="chip" style="background:var(--or2);color:var(--or)">最丰厚</span>',2000,ST.ordered?'已完成 1/1':'已完成 0/1',ST.ordered?'':'去完成',"go('templates')",'另送首单免佣 1 张 ｜ 开通后 30 天内')}
- ${task('第二单同样有礼',1500,'首单到期后 30 天内','报名',"toast('已报名，首单到期后生效')",'另送免佣 1 张 ｜ 换一种策略再 +500')}
+ ${task('首次完成期权交易 <span class="chip" style="background:var(--or2);color:var(--or)">最丰厚</span>',2000,ST.ordered?'已完成 1/1':'已完成 0/1',ST.ordered?'':'去完成',"go('templates')",'另送免佣 1 张 ＋ 亏损兜底券 ｜ 开通后 30 天内')}
+ ${task('第二单同样有礼',1500,'首单到期后 30 天内','报名',"toast('已报名，首单到期后生效')",'另送免佣 1 张 ｜ 策略自选')}
 </div>
-<div class="card"><h3>三件套挑战 <span class="chip">60 天</span></h3><p>备兑开仓、保护性认沽、实值认购各做过 1 次（每次 1 张）</p>
- ${tier(['做过 1 种','做过 2 种','做过 3 种'],['800','2000','5000'],ST.ordered?1:0)}
- <div style="font-size:12px;color:#666;margin-top:8px">（${ST.ordered?1:0}/3）已做：${ST.ordered?'备兑开仓':'无'}</div>
- <div class="btn pri sm" style="margin-top:8px" onclick="toast('已报名三件套挑战')">报名</div></div>
+<div class="card"><h3>首单亏损兜底 <span class="chip" style="background:var(--or2);color:var(--or)">首单专享</span></h3><p>第一单到期如果亏了，亏损的 50% 以现金券返还（上限 100 美元），可抵交易费用。只管做，亏了不白亏。</p><div class="kv" style="margin-top:6px"><span>适用</span><b>首单保护内的 1 张合约</b></div><div class="kv"><span>到账</span><b>到期结算后 3 个交易日</b></div></div>
 <div class="card"><h3>老带新</h3>
  ${task('好友完成模拟盘一单',300,'已邀请 0 人','邀请',"toast('邀请链接已复制')")}
  ${task('好友完成期权首单',1000,'','邀请',"toast('邀请链接已复制')")}
@@ -536,7 +536,7 @@ function renderGuide(){const g=document.getElementById('guide');g.innerHTML=`<h1
 function toast(t){const o=document.getElementById('overlay');const e=document.createElement('div');e.className='toast';e.textContent=t;o.appendChild(e);setTimeout(()=>e.remove(),1800);}
 function modal(h,p,btns){document.getElementById('overlay').innerHTML=`<div class="modal"><div class="box"><h4>${h}</h4><p>${p}</p><div class="btns">${btns.map((b,i)=>`<div class="btn ${i?'pri':''}" onclick="MB[${i}]()">${b[0]}</div>`).join('')}</div></div></div>`;window.MB=btns.map(b=>b[1]);}
 function closeModal(){document.getElementById('overlay').innerHTML='';}
-function reset(){Object.assign(ST,{opened:false,simDone:false,ordered:false,qty:1,quiz:[null,null,null],tab:'cc',sub:'first',more:false});go('home');}
+function reset(){Object.assign(ST,{opened:false,simDone:false,ordered:false,qty:1,quiz:[null,null,null],tab:'cc',sub:'first',more:false,hold:'short'});go('home');}
 window.addEventListener('hashchange',()=>go(location.hash.slice(1)||'home'));
 go(location.hash.slice(1)||'home');
 </script>
